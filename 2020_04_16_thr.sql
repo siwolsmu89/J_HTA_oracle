@@ -125,6 +125,134 @@ select employee_id, first_name, manager_id
 from employees
 where manager_id in(101,102);
 
+select first_name, last_name
+from employees
+where first_name like '_________%' and first_name like '%er';
+
+-- 직종아이디가 **_MAN인 직원의 아이디, 이름, 직종아이디, 급여 조회하기
+select employee_id, first_name, job_id, salary
+from employees
+where job_id like '%MAN';
+
+-- 이름이 'A'로 시작하고 이름이 네 글자인 직원의 이름을 전부 조회하기
 select first_name
 from employees
-where first_name like '___________';
+where first_name like 'A___';
+
+-- 이름에 'e'가 포함된 직원의 이름을 전부 조회하기
+select first_name
+from employees
+where first_name like 'E%' 
+or first_name like '%e%';
+
+-- 논리 연산자를 사용해서 2개 이상의 조건을 만족하는 행을 조회하기
+-- 80번 부서에서 일하는 직원 중 급여가 3000달러 미만인 사원의 아이디, 이름, 급여를 조회하기
+select employee_id, first_name, salary
+from employees
+where department_id=80 
+and salary<3000;
+
+-- 50번 부서에서 일하는 직원 중 직종이 매니저인 직원의 직원아이디, 이름, 직종아이디, 급여를 조회하기
+select employee_id, first_name, job_id, salary
+from employees
+where department_id=50 
+and job_id like '%MAN';
+
+-- 50번 부서에서 일하고 급여를 2500불 이하로 받고, 자신의 매니저의 아이디가 121번인 직원의 아이디, 이름, 입사일, 급여, 직종아이디를 조회하기
+select employee_id, first_name, hire_date, salary, job_id
+from employees
+where department_id=50 
+and salary<=2500 
+and manager_id=121;
+
+-- 50번이나 60번 부서에 소속된 직원 중에서 이름이 'A'로 시작하는 직원의 아이디, 이름, 부서아이디를 조회하기
+select employee_id, first_name, department_id
+from employees
+where department_id in (50,60) 
+and first_name like 'A%';
+
+-- 커미션을 받는 직원 중에서 급여를 10000달러 이상 받는 직원의 아이디, 이름, 직종, 입사일, 급여, 연봉을 조회하기
+-- 연봉 = 급여*4*12 + 급여*커미션*4*12
+select 
+    employee_id
+    , first_name
+    , job_id
+    , hire_date, salary
+    , (salary*(1+commission_pct)*4*12) as "ANN SAL"
+from employees
+where commission_pct is not null 
+and salary>=10000;
+
+-- 정렬하기
+-- 60번 부서에 소속된 사원들의 아이디, 이름, 급여, 입사일을 조회하기
+-- 이름순으로 오름차순 정렬하기
+select employee_id, first_name, salary, hire_date
+from employees
+where department_id=60
+order by first_name;
+
+-- 60번 부서에 소속된 사원들의 아이디, 이름, 급여, 입사일을 조회하기
+-- 이름순으로 오름차순 정렬하기
+select employee_id, first_name, salary, hire_date
+from employees
+where department_id=60
+order by first_name ASC;
+
+-- 60번 부서에 소속된 사원들의 아이디, 이름, 급여, 입사일을 조회하기
+-- 이름순으로 내림차순 정렬하기
+select employee_id, first_name, salary, hire_date
+from employees
+where department_id=60
+order by first_name DESC;
+
+-- 60번 부서에 소속된 사원들의 아이디, 이름, 급여, 연봉, 입사일을 조회하기
+-- 연봉순으로 오름차순 정렬하기 (ASC는 생략가능)
+select employee_id, first_name, salary, salary*48, hire_date
+from employees
+where department_id=60
+order by salary*48;         -- 연산식을 사용해서 정렬
+
+-- 60번 부서에 소속된 사원들의 아이디, 이름, 급여, 연봉, 입사일을 조회하기
+-- 연봉순으로 오름차순 정렬하기
+select employee_id, first_name, salary, salary*48, hire_date
+from employees
+where department_id=60
+order by 4 ASC;            -- 컬럼의 순번을 사용해서 정렬하기(select절의 4번째 컬럼 : salary*48, db에서의 컬럼순번이 아님)
+
+select employee_id, first_name, salary, salary*48 as annual_salary, hire_date
+from employees
+where department_id=60
+order by annual_salary asc;    -- 컬럼의 별칭을 사용해서 정렬하기(가장 깔끔 / 추천 방법)
+
+-- 50번 부서에 소속된 직원 중에서 연봉이 25000달러 이상인 직원들의 아이디, 이름, 급여, 연봉, 입사일을 조회하기
+-- 연봉순으로 오름차순 정렬하기
+-- 실행 시 오류가 발생하는 SQL문
+select employee_id, first_name, salary, salary*48 as annual_salary, hire_date
+from employees
+where 
+    department_id=50 
+    and annual_salary >250000                -- where절에는 select절에서 정의한 별칭을 사용할 수 없다. 
+                                     -- (실행 순서상 where절이 select절보다 먼저 실행되기 때문)
+order by annual_salary;              -- order by 절은 select절 실행 이후에 실행되므로 select절에서 정의한 별칭을 사용할 수 있다.
+
+-- 50번 부서에서 근무하는 직원들의 이름, 급여를 조회하고 급여의 내림차순으로 정렬하기
+-- 만약 급여가 동일하면 이름의 오름차순으로 정렬하기
+select 
+    first_name
+    , salary
+from employees
+where department_id=50
+order by 
+    salary desc
+    , first_name asc;
+
+-- 단일 행 함수 중 문자 함수 사용하기
+-- 사원의 아이디, 이름을 조회하기(이름을 대문자로 표시)
+select employee_id as ID
+    , UPPER(first_name) as NAME
+    , Lower(first_name) as "name"
+    , length(first_name) as length
+    , concat(first_name, last_name) as full_name
+    , lpad(first_name, 10, '#')
+    , RPAD(first_name, 10, '@')
+from employees;
