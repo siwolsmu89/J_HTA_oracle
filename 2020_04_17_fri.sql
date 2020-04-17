@@ -161,3 +161,177 @@ from dual;
 select trunc(sysdate) - to_date('1989-10-27', 'yyyy-mm-dd') as days
     , trunc(months_between(trunc(sysdate), to_date('1989-10-27', 'yyyy-mm-dd'))) as months
 from dual;
+
+-- 2005-01-01 ~ 2005-03-31 사이에 입사한 사람의 아이디, 이름, 입사일, 직종아이디 조회하기
+select employee_id, first_name, hire_date, job_id
+from employees
+where hire_date>=to_date('2005-01-01')
+    and hire_date<=to_date('2005-03-31')
+order by hire_date;
+
+-- between으로 해보기
+select employee_id, first_name, hire_date, job_id
+from employees
+where hire_date between to_date('2005-01-01') 
+                and to_date('2005-03-31')
+order by hire_date;
+
+-- 2003년에 입사한 직원의 아이디, 이름, 입사일 조회
+-- where 조건식에 쓰는 내용은 가능하면 왼쪽은 원래 값 그대로 두고 오른쪽을 가공해서 사용
+-- to_char(hire_date, 'yyyy') = '2003' 이런 식으로 쓰지 말라는 것
+-- 왼쪽은 hire_date 그대로 두고 오른쪽을 가공
+select employee_id, first_name, hire_date
+from employees
+where hire_date > to_date('2003-01-01', 'yyyy-mm-dd')
+    and hire_date < to_date('20040101', 'yyyymmdd')
+order by hire_date;
+
+-- 숫자를 천단위마다 구분자를 포함시켜 조회하기
+select to_char(10000, '000,000'), to_char(10000, '999,999')
+from dual;
+
+-- 숫자를 소수점 2자리에서 반올림한 후 텍스트로 변환해 조회하기
+select to_char(123.456, '000.00'), to_Char(123.456, '999.99')
+from dual;
+
+-- 문자를 숫자로 변환해서 사용하기
+-- 급여가 15000달러 이상인 직원의 아이디, 이름, 급여를 조회하기
+-- to_number를 사용해도 되지만 '숫자' 형태 그대로 사용해도 됨(대체로 이렇게 씀)
+-- 묵시적 형 변환이 일어났다고 표현한다.
+select employee_id, first_name, salary
+from employees
+where salary >= '15000';
+
+-- to_number를 사용한 경우(정상작동)
+select employee_id, first_name, salary
+from employees
+where salary >= to_number('15000');
+
+-- 숫자에 ,가 들어간 형태로 표현이 되어있을 수 있음. 
+-- 이럴 때만 to_number를 사용 (이 경우에는 반드시 to_number를 사용해야 함)
+select employee_id, first_name, salary
+from employees
+where salary >= to_number('15,000', '99,999');
+
+-- 날짜도 숫자와 마찬가지로 묵시적 형 변환이 가능하다.
+select employee_id, first_name, hire_date
+from employees
+where hire_date > '2003-01-01'
+    and hire_date < '2004/01/01'
+order by hire_date;
+
+-- NVL 함수
+select nvl(10,1)            -- 10이 최종값이다
+     , nvl(null, 1)          -- 1이 최종값이다
+from dual;
+
+-- 직원아이디, 이름, 급여, 커미션을 조회하기
+-- 커미션값이 null인 경우 0으로 조회한다.
+select employee_id, first_name, salary, nvl(commission_pct, 0) as cms_pct
+from employees
+order by cms_pct desc;
+
+-- 직원아이디, 이름, 실급여를 조회하기
+-- 실급여 = 급여 + 급여*커미션이다.
+select employee_id
+    , first_name, salary
+    , salary+ salary*nvl(commission_pct, 0) as actual_pay
+    , salary+ (salary*commission_pct) as error_pay
+    , commission_pct as cms
+from employees
+order by actual_pay desc;
+
+-- 부서아이디, 부서명, 해당부서 관리자 아이디를 조회하기
+-- 관리자 아이디가 null인 경우 '지정된 관리자 없음'으로 조회하기
+select department_id
+    , department_name
+    , nvl(to_char(manager_id), 'no manager') as manager
+from departments
+order by manager_id;
+
+-- 부서아이디, 부서명, 해당부서 관리자 아이디를 조회하기
+-- 관리자 아이디가 null인 경우 100번 직원(사장)을 관리자로 지정한다.
+select department_id
+    , department_name
+    , nvl(manager_id, 100) as manager
+from departments
+order by manager desc;
+
+select department_id
+    , department_name
+    , case 
+        when manager_id is not null then to_char(manager_id)
+        when manager_id is null then 100||'(*)'
+     end as manager
+from departments
+order by manager;
+
+-- nvl2() 함수 사용하기
+select nvl2(10, 1, 0)      -- 최종값은 1이다.
+    , nvl2(null, 1, 0)     -- 최종값은 0이다.
+from dual;
+
+-- 직원아이디, 이름, 커미션 수령여부를 'yes', 'no'로 조회하기
+select employee_id, first_name, nvl2(commission_pct, 'yes', 'no') as cms
+from employees
+order by cms desc, commission_pct desc, salary desc;
+
+-- case ~ when 
+-- 직원아이디, 이름, 급여, 급여등급 조회하기
+-- 급여등급은
+-- 20000달러 이상 A
+-- 10000달러 이상 B
+-- 5000 달러 이상 C
+-- 그 외는 D
+select employee_id, first_name, salary
+    , case
+        when salary>=20000 then 'A'
+        when salary>=10000 then 'B'
+        when salary>=5000 then 'C'
+        else 'D'
+       end as grade
+from employees
+order by salary desc;
+
+-- case~when
+-- 직원아이디, 이름, 급여, 인상된 급여 조회하기
+-- 급여 인상은
+-- 20000달러 이상 10%
+-- 10000달러 이상 15%
+-- 5000달러 이상 20%
+-- 그외 25%
+select employee_id, first_name, salary
+    , case
+        when salary>=20000 then salary*(1.1)
+        when salary>=10000 then salary*(1.15)
+        when salary>=5000 then salary*(1.2)
+        else salary*(1.25)
+    end as rise
+from employees
+order by rise desc;
+
+select employee_id
+    , first_name
+    , salary
+    , decode (department_id, 50, salary*1.1,
+                             80, salary*1.15,
+                             salary*1.05) rise
+from employees
+order by employee_id;
+
+-- decode()함수를 사용해서 조회하기
+-- decode() 안에 decode() 쓰기
+-- 직원아이디, 이름, 급여, 급여등급 조회하기
+-- 인상률
+-- 20000 달러 이상 A
+-- 10000 달러 이상 B
+-- 5000 달러 이상 C
+-- 그외 D
+select employee_id, first_name
+    , decode (trunc(salary, -4), 20000, 'A'
+                                 , 10000, 'B'
+                                 , decode (trunc(salary/5000)*5000, 5000, 'C'       -- 값들의 연속성을 유지하기 위해
+                                                                        , 'D')
+              ) as salary_grade
+from employees
+order by salary_grade;
