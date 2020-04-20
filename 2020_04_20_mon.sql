@@ -161,3 +161,14 @@ where E.department_id = 50
     and E.salary >= G.lowest_sal
     and E.salary <= G.highest_sal
 order by salary desc, first_name;
+
+-- 직종별 최저/최고급여의 등급 조회하기
+select J.job_id, J.job_title
+    , J.min_salary, G1.gra as min_sal_grade
+    , J.max_salary, G2.gra as max_sal_grade
+from jobs J, job_grades G1, job_grades G2
+where J.min_salary >= G1.lowest_sal
+    and J.min_salary <= G1.highest_sal
+    and J.max_salary >= G2.lowest_sal
+    and J.max_salary <= G2.highest_sal
+order by max_sal_grade desc, min_sal_grade desc;
