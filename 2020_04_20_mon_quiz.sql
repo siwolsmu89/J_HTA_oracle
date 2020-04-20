@@ -148,8 +148,24 @@ where D.manager_id = E.employee_id
 order by department_id;
 
 -- 18. 101번 직원이 근무했던 부서에서 근무중이 직원의 아이디, 이름, 부서아이디, 부서명을 조회하기
+select distinct E.employee_id, E.first_name, E.department_id, D.department_name
+from employees E, departments D, job_history H
+where  H.employee_id = 101
+    and E.department_id = H.department_id
+    and H.department_id = D.department_id
+order by department_id, employee_id; 
 
 -- 19. 직원중에서 자신이 종사하고 있는 직종의 최고급여 50%이상을 급여로 받고 있는 
 --     직원의 아이디, 이름, 급여, 직종아이디, 직종 최고급여를 조회하기
+select E.employee_id, E.first_name, E.salary, E.job_id, J.max_salary
+from employees E, jobs J
+where E.job_id = J.job_id
+    and E.salary >= (J.max_salary*0.5)
+order by employee_id;
 
 -- 20. 미국(US)에 위치하고 있는 부서의 아이디, 이름, 위치번호, 도시명, 주소를 조회하기 
+select D.department_id, D.department_name, D.location_id, L.city, L.street_address
+from departments D, locations L
+where D.location_id = L.location_id
+    and L.country_id = 'US'
+order by department_id;
