@@ -2,7 +2,7 @@
 select sysdate
 from dual;
 
--- 2.  급여를 5000달러 이상받고, 2005년에 입사한 직원의 아이디, 이름, 급여, 입사일을 조회하기
+-- 2.  급여를 5000달러 이상 받고, 2005년에 입사한 직원의 아이디, 이름, 급여, 입사일을 조회하기
 select employee_id, first_name, salary, hire_date
 from employees
 where salary>=5000
@@ -12,9 +12,8 @@ order by employee_id;
 -- 3.  이름에 e나 E가 포함된 직원 중에서 급여를 10000달러 이상 받는 직원의 아이디, 이름, 급여를 조회하기
 select employee_id, first_name, salary
 from employees
-where salary>=10000
-    and first_name like '%e%' 
-    or first_name like '%E%'
+where (first_name like '%e%' or first_name like '%E%')    -- or가 있으면 반드시 괄호로 or이 적용되는 조건들을 묶어주자
+    and salary>=10000
 order by first_name;
 
 -- 4.  입사년도와 상관없이 4월에 입사한 직원들의 아이디, 이름, 입사일을 조회하기
@@ -26,8 +25,7 @@ order by employee_id;
 -- 5.  2006년 상반기(1/1 ~ 6/30)에 입사한 직원들의 아이디, 이름, 입사일 조회하기
 select employee_id, first_name, hire_date
 from employees
-where hire_date between to_date('2006-01-01') 
-                and to_date('2006-06-30')
+where hire_date between '2006-01-01' and '2006-06-30'
 order by hire_date;
 
 -- 6.  50번 부서에 소속된 직원들의 급여를 13%인상시키려고 한다.
@@ -43,7 +41,7 @@ order by employee_id;
 --     120 Matthew 8000 ********
 --     122 Shanta  6500 ******
 select employee_id, first_name, salary
-    , lpad('*', salary/1000, '*') as "*"
+    , lpad('*', trunc(salary/1000), '*') as "*"
 from employees
 where department_id = 50
 order by employee_id;
@@ -57,13 +55,14 @@ where D.manager_id is null
     and D.location_id = L.location_id
 order by department_id;
 
--- 9.  90번 부서에 소속된 직원의 직원아이디, 이름, 직종, 급여를 조회하기
+-- 9.  'Executive' 부서에 소속된 직원의 직원아이디, 이름, 직종, 급여를 조회하기
 select E.employee_id, E.first_name
     , J.job_title
     , E.salary
-from employees E, jobs J
+from employees E, jobs J, departments D
 where E.job_id = J.job_id
-    and E.department_id = 90
+    and E.department_id = D.department_id
+    and D.department_name = 'Executive'
 order by E.employee_id;
 
 -- 10. 100번 직원이 부서관리자로 지정된 부서에 소속된 직원의 직원아이디, 이름, 직종, 급여를 조회하기
@@ -85,16 +84,16 @@ order by gra, salary;
 
 -- 12. 직원들의 직종정보를 참고했을 때 자신이 종사하고 있는 직종의 최저급여를 받고 있는
 --     직원의 아이디, 이름, 급여, 직종아이디, 직종최저급여를 조회하기
-select E.employee_id, E.first_name, E.salary, E.job_id, J.min_salary as job_min
+select E.employee_id, E.first_name, E.salary, E.job_id
+    , J.min_salary as job_min
 from employees E, jobs J
 where E.job_id = J.job_id
     and E.salary = J.min_salary
 order by salary;
 
--- 13. 커미션을 받는 직원들의 직원아이디, 이름, 커미션, 급여, 직종아이디, 직종제목, 급여, 소속부서 아이디, 부서명을 조회하기
-select E.employee_id, E.first_name, E.commission_pct
+-- 13. 커미션을 받는 직원들의 직원아이디, 이름, 커미션, 급여, 직종아이디, 직종제목, 소속부서 아이디, 부서명을 조회하기
+select E.employee_id, E.first_name, E.commission_pct, E.salary
     , E.job_id, J.job_title
-    , E.salary
     , E.department_id, D.department_name
 from employees E, jobs J, departments D
 where E.commission_pct is not null
@@ -121,30 +120,32 @@ select E.employee_id, E.first_name
     , L.city
 from employees E, jobs J, job_grades G, departments D, locations L
 where E.job_id = J.job_id
-    and E.salary >= G.lowest_sal
-    and E.salary <= G.highest_sal
+    and E.salary >= G.lowest_sal and E.salary <= G.highest_sal
     and E.department_id = D.department_id
     and D.location_id = L.location_id
 order by employee_id;
  
 -- 16. 급여를 5000달러 이하로 받는 직원들의 아이디, 이름, 직종, 소속부서 아이디, 소속부서명, 소속부서 관리자 직원아이디, 
 --     소속부서 관리자 직원이름을 조회하기
-select E.employee_id, E.first_name, J.job_title, E.department_id, D.department_name, D.manager_id, E2.first_name
+select E.employee_id, E.first_name, E.salary
+    , J.job_title
+    , D.department_id, D.department_name
+    , D.manager_id, E2.first_name as manager_name
 from employees E, employees E2, jobs J, departments D
 where E.salary <= 5000
     and E.job_id = J.job_id
     and E.department_id = D.department_id
     and D.manager_id = E2.employee_id
-order by E2.first_name;
+order by E2.first_name, E.employee_id;
 
 -- 17. 'Asia'지역에 소재지를 두고 있는 부서의 아이디, 부서명, 부서관리자 이름을 조회하기
-select D.department_id, D.department_name, E.first_name
+select D.department_id, D.department_name, E.first_name as manager_name
 from departments D, employees E, locations L, countries C, regions R
-where D.manager_id = E.employee_id
-    and D.location_id = L.location_id
-    and L.country_id = C.country_id
-    and C.region_id = R.region_id
-    and R.region_name = 'Asia'
+where R.region_name = 'Asia'
+    and R.region_id = C.region_id
+    and C.country_id = L.country_id
+    and L.location_id = D.location_id
+    and D.manager_id = E.employee_id
 order by department_id;
 
 -- 18. 101번 직원이 근무했던 부서에서 근무중이 직원의 아이디, 이름, 부서아이디, 부서명을 조회하기
