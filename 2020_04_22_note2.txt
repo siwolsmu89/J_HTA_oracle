@@ -1,0 +1,88 @@
+JDBC(Java DataBase Connectivity)
+	- 자바에서 데이터베이스에 엑세스할 수 있도록 하는 표준을 정의해놓은 것
+	- java.sql, javax.sql 패키지에 JDBC 관련 표준이 정의된 인터페이스, 클래스가 위치하고 있다.
+	- JDBC에서 정의한 표준(데이터베이스 엑세스 기술 표준)은 각 데이터베이스 시스템을 개발한 업체가 그 표준을 구현하여 제공
+
+	java.sql.Connection 인터페이스
+		* 데이터베이스와 연결을 담당하는 객체다.
+		* SQL을 데이터베이스로 전송하고, 실행결과를 반환받기 위해서는 데이터베이스와의 연결 상태가 유지되어야 한다.
+		* DriverMAnager의 getConnection(url, username, password) 메소드를 실행해서 획득한다.
+		* 주요 메소드 
+			void commit()
+				INSERT, UPDATE, DELETE 구문 실행결과를 영구적으로 DB에 반영시킨다
+			void rollback()
+				INSERT, UPDATE, DELETE 구문 실행결과의 DB 반영을 취소한다.
+			void close()
+				데이터베이스와의 연결을 해제한다.
+			Statement createStatement()
+				SQL전송을 담당하는 Statement 객체를 반환한다.
+			PreparedStatement prepareStatement()
+				SQL전송을 담당하는 PreparedStatement 객체를 반환한다.
+
+	java.sql.Statement 인터페이스
+		* SQL의 실행과 결과값 반환을 담당하는 객체다.
+		* Statement는 보안문제로 사용하지 않는다.
+
+	java.sql.PreparedStatement 인터페이스
+		* SQL의 실행과 결과값 반환을 담당하는 객체다.
+		* 주요 메소드
+			int executeUpdate()
+				INSERT, UPDATE, DELETE 구문을 실행시키고 반영된 행의 수를 반환한다.
+			ResultSet executeQuery()
+				SELECT 구문을 실행시키고, 조회결과를 ResultSet에 담아 반환한다.
+			void close()
+				이 객체에 관련된 데이터베이스와 JDBC Resource를 해제시킨다.
+			void setInt(int index, int value)
+				SQL 구문에서 지정된 순번의 ?에 정수값을 치환시킨다.
+			void setLong(int index, long value)
+				SQL 구문에서 지정된 순번의 ?에 정수값을 치환시킨다.
+			void setDouble(int index, double value)
+				SQL 구문에서 지정된 순번의 ?에 실수값을 치환시킨다.
+			void setString(int index, String value)
+				SQL 구문에서 지정된 순번의 ?에 문자열값을 치환시킨다.
+			void setDate(int index, Date value)
+				SQL 구문에서 지정된 순번의 ?에 날짜값을 치환시킨다.
+
+	java.sql.ResultSet 인터페이스
+		* select 구문 실행결과로 획득된 테이블의 데이터를 포함하고 있는 객체다.
+		* 획득된 데이터를 조회할 수 있는 다양한 메소드를 제공한다.
+			boolean next()
+				현재 위치에서 커서를 다음 행으로 이동시킨다.
+				행이 존재하면 true, 존재하지 않으면 false를 반환한다.
+			void close()
+				이 객체와 관련된 데이터베이스와 JDBC Resource를 해제시킨다.
+			int getInt()
+				커서가 위치한 행에서 지정된 컬럼명의 값을 반환한다.
+			long getLong(String columnName)
+				커서가 위치한 행에서 지정된 컬럼명의 값을 반환한다.
+			double getDouble(String columnName)
+				커서가 위치한 행에서 지정된 컬럼명의 값을 반환한다.
+			String getString(String columnName)
+				커서가 위치한 행에서 지정된 컬럼명의 값을 반환한다.
+			Date getDate(String columnName)
+				커서가 위치한 행에서 지정된 컬럼명의 값을 반환한다.
+
+	java.sql.ResultSetMetaData 인터페이스
+		* SELECT 구문 실행결과로 획득된 테이블에 대한 컬럼명, 컬럼타입 정보를 포함
+		* 개발에서 사용할 일 없음
+
+	java.sql.Driver 인터페이스
+		* 모든 JDBC 드라이버가 반드시 구현해야 하는 인터페이스다.
+		* 개발에서 사용할 일 없음, 데이터베이스시스템 제조사가 사용함
+
+	java.sql.DriverManager 클래스
+		* JDBC Driver에 대한 관리 서비스를 제공하는 객체이다.
+		* JDBC Driver의 등록, 해제, 등록된 JDBC Driver를 이용한 데이터베이스 연결을 지원한다.
+		* 주요 메소드
+			Connection getConnection(String url, String username, String password)
+				지정된 url이 가리키는 데이터베이스와 연결된 Connection 객체를 반환한다.
+
+	javax.sql.DataSource 인터페이스
+		* 모든 Connection Pool 구현 클래스가 반드시 구현해야 하는 인터페이스다.
+		* Connection Pool은 지금 설명 x
+		* 주요 메소드
+			Connection getConnection()
+				Connection Pool에서 Connection을 반환한다.
+
+
+
