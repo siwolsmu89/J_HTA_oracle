@@ -29,3 +29,6 @@ COMMIT; -- 현재 트랜잭션의 변경내용을 저장, 현재 트랜잭션 종료, 새 트랜잭션 시작
 -- DML3 작업
 
 ROLLBACK; -- 새로 시작된 트랜잭션의 변경사항(DML1~3)을 버림, 현재 트랜잭션 종료, 새 트랜잭션 시작
+
+SELECT ROWID, user_id, user_email
+FROM sample_book_users;
