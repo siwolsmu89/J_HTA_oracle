@@ -1,0 +1,73 @@
+요구사항
+1. 사용자는 질문을 등록할 수 있다.
+2. 사용자는 자신이 등록한 질문을 볼 수 있다.
+3. 사용자는 자신이 등록한 질문을 삭제할 수 있다.
+4. 사용자는 자신의 질문에 대한 답변을 볼 수 있다.
+5. 사용자는 다른 사람의 질문도 볼 수 있다.
+
+1. 관리자는 질문을 볼 수 있다.
+2. 관리자는 답변을 등록할 수 있다.
+3. 관리자는 부적절한 질문을 임의로 삭제할 수 있다.
+
+필요한 기능
+Bookstore.java
+	7.문의게시판 메뉴 추가
+		1. 전체조회 
+			- 모든 질문글 표시
+		2. 등록 
+			- 아이디, 제목, 내용, 질문구분(배송, 결재, 품질)을 입력해서 등록한다.
+		3. 조회
+			- 질문글 번호를 입력받아서 질문글과 답변글을 표시한다.
+			- 답변글이 없으면 표시하지 않는다.
+		4. 삭제
+			- 아이디와 질문글 번호를 입력받아 질문글을 삭제한다.
+
+BookstoreAdmin.java
+	6.문의게시판
+		1. 전체조회
+			- 모든 질문글 표시
+		2. 답변등록
+			- 질문글번호, 내용을 입력해서 등록한다.
+		
+BookstoreService.java
+	boolean 문의등록(Question question) { ... }
+	void 답변등록(int questionNo, String content) { ... }
+	List<Question> 문의글전체조회() { ... }
+	Question 문의글조회(int questionNo) { ... }
+	void 문의글삭제(String userId, int questionNo) { ... }
+
+QuestionDAO.java
+	void addQuestion(Question question){ ... }
+	List<Question> getAllQuestions() { ... }
+	Question getQuestionByNo(int questionNo) { ... }
+	void removeQuestion(int questionNo) { ... }
+AnswerDAO.java
+	void addAnswer(Answer answer){ ... }
+	Answer getAnswer(int questionNo) { ... }
+
+	select *
+	from sample_book_answers
+	where question_no = ?
+
+Question.java
+	private int no
+	private String title
+	private User user
+	private String content
+	private int viewCount
+	private Date registeredDate
+	private boolean status
+	private String type	
+	
+Answer.java
+	private int no
+	private String content
+	private Date registeredDate
+	private Question question
+
+
+작성순서
+1. query.properties에 SQL 정의
+2. QuestionDAO.java와 AnswerDAO.java 구현
+3. BookstoreService.java에 추가기능들 구현
+4. Bookstore.java에서 사용자와 상호작용하는 메뉴 구현

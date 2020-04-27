@@ -60,3 +60,15 @@ CREATE TABLE sample_book_answers (
 -- 테이블 이름 변경하기
 -- RENAME 지금 이름 TO 새 이름
 RENAME sample_books_answers TO sample_book_answers;
+
+-- 문의/답변 게시판용 일련번호 생성기 만들기
+-- 일반적인 환경에서는 DB가 설치된 컴퓨터를 안 끄기 때문에 일련번호를 일정 수량 미리 생성해놓고, 사용할 때마다 생성된 번호를 하나씩 제공
+-- 이런 방법을 채택할 경우 미리 생성한 일련번호를 사용하지 않고 컴퓨터를 종료하면 전에 생성된 일련번호 이후의 일련번호부터 사용
+-- NOCACHE : 일련번호를 미리 생성하지 않도록 하는 키워드
+CREATE SEQUENCE sample_question_seq START WITH 1000000 NOCACHE;
+CREATE SEQUENCE sample_answer_seq START WITH 1000000 NOCACHE;
+
+INSERT INTO sample_book_questions
+    (question_no, question_title, user_id, question_content, question_view_count, question_registered_date, question_status, question_type)
+VALUES  
+    (sample_question_seq.NEXTVAL, '질문 테스트 001', 'JasikZasik', '쿼리문 테스트 한 번 해봅니다', DEFAULT, SYSDATE, DEFAULT, '테스트');
