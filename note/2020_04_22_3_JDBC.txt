@@ -1,4 +1,4 @@
-JDBC(Java DataBase Connectivity)
+- JDBC(Java DataBase Connectivity)
 	- 자바에서 데이터베이스에 엑세스할 수 있도록 하는 표준을 정의해놓은 것
 	- java.sql, javax.sql 패키지에 JDBC 관련 표준이 정의된 인터페이스, 클래스가 위치하고 있다.
 	- JDBC에서 정의한 표준(데이터베이스 엑세스 기술 표준)은 각 데이터베이스 시스템을 개발한 업체가 그 표준을 구현하여 제공

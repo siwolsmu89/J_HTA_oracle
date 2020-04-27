@@ -1,4 +1,4 @@
-front-end-side
+- front-end-side
 	사용자와의 상호작용
 	* 사용자의 입력을 처리한다.
 	* 사용자에게 처리결과를 보여준다.
@@ -7,7 +7,7 @@ front-end-side
 	* 필요한 기술 
 	  - (html, css,) javascript, jQuery, 다양한 javascript library
 
-back-end-side(server-side)
+- back-end-side(server-side)
 	사용자의 요청을 처리
 	* 사용자가 입력한 내용을 DB에 저장한다.
 	* 사용자가 요구한 요청을 처리한다.
