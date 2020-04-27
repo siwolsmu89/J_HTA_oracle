@@ -4,6 +4,8 @@ front-end-side
 	* 사용자에게 처리결과를 보여준다.
 	* 사용자가 사용할 수 있는 다양한 메뉴를 제공한다
 	예) 각종 APP.java, 웹페이지
+	* 필요한 기술 
+	  - (html, css,) javascript, jQuery, 다양한 javascript library
 
 back-end-side(server-side)
 	사용자의 요청을 처리
@@ -16,3 +18,5 @@ back-end-side(server-side)
 	  - 사용자의 요청을 처리하기 위해 업무로직을 수행하는 부분(Service)
 	  - 사용자의 요청을 처리하기 위해 필요한 데이터를 획득하기 위해 
 	  DataBase와 상호작용하는 부분(DAO, Data Access Object)
+	* 필요한 기술
+	  - java, Servlet/JSP, SQL, Spring framework, mybaits(db access), JPA(db access), 
