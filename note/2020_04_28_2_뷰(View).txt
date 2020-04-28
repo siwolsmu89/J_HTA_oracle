@@ -1,0 +1,38 @@
+- 뷰의 생성 및 이용
+	- 뷰는 하나 이상의 테이블을 이용해서 만든 가상의 테이블이다.
+	- 목적 
+		* 복잡한 SQL 구문을 쉽게 작성하기 위해
+		* 동일한 데이터로부터 다양한 결과를 얻기 위해
+		* 데이터의 엑세스를 제한하기 위해
+	- 뷰의 생성
+	  CREATE OR REPLACE VIEW 뷰이름
+	  AS SELECT 컬럼, 컬럼, 컬럼
+	     FROM 테이블명
+	     [WHERE 조건식]
+	     [GROUP BY 컬럼]
+	     [HAVING 조건식]
+	  [WITH READ ONLY]
+	  * WITH READ ONLY 옵션이 지정된 뷰는 DML(INSERT, UPDATE, DELETE)작업을 수행할 수 없다.
+	  * SELECT문으로 획득된 결과를 가상의 TABLE로 간주
+	  	예)
+		부서아이디와 부서별 사원 수를 포함하고 있는 가상의 테이블
+		CREATE OR REPLACE VIEW dept_emp_count_view
+		AS SELECT department_id, count(*)
+		   FROM employees
+		   WHERE department_id IS NOT NULL
+		   GROUP BY department_id;
+
+		사원아이디, 이름, 급여, 연봉을 포함하고 있는 가상의 테이블
+		CREATE OR REPLACE VIEW emp_salary_view
+		AS SELECT employee_id, first_name, salary,
+			  salary*4*12, salary*(1+nvl(commission_pct, 0))*4*12 annual salary
+		   FROM employees;
+
+		사원아이디, 이름, 급여, 급여등급을 포함하고 있는 가상의 테이블
+		CREATE OR REPLACE VIEW emp_salary_grade_view
+		AS SELECT E.employee_id, E.first_name, E.salary, G.gra
+		   FROM employees E, job_grades G
+		   WHERE (E.salary BETWEEN G.lowest_sal AND G.highest_sal);
+	
+	- 뷰의 삭제
+	  DROP VIEW 뷰이름;
