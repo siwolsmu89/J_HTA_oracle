@@ -79,6 +79,7 @@
 				userpwd VARCHAR2(100) CONSTRAINT user_pwd_nn NOT NULL, -- 제약조건별칭 설정
 				...
 			  )
+			  * 컬럼제약조건 레벨로만 정의할 수 있다.
 			
 			* UNIQUE 제약조건
 			  CREATE TABLE users(
@@ -115,6 +116,25 @@
 				book_no2 number(10),
 				FOREIGN KEY (user_no2) REFERENCES users (user_no)
 				CONSTRAINT orders_bookno_fk_ FOREIGN KEY (book_no2)
-					REFERENCES users (user_no)
+					REFERENCES books (book_no)
 			  )
+			  * 외래키 user_no2의 값은 users 테이블의 user_no 컬럼을 참조한다.
+			  * 외래키 book_no2의 값은 books 테이블의 book_no 컬럼을 참조한다.
+			  * 외래키가 참조하는 컬럼은 반드시 PRIMARY KEY, UNIQUE 제약조건이 지정된 컬럼이어야 한다.
 			
+			* CHECK 제약조건
+			  CREATE TABLE products (
+				price number(7,0) 				CHECK (price >= 0),
+				sold_out char(1) 				CHECK (sold_out in ('Y', 'N')),
+				stock number(5,0) CONSTARINT product_stock_cc 	CHECK(stock >= 0)
+			  )
+			  * 가격은 0원 이상만 입력할 수 있다.
+			  * 절판여부는 'Y', 'N' 중 하나만 입력할 수 있다.
+			  * 재고는 0개 이상만 입력할 수 있다.
+			  CREATE TABLE course_registrations (
+				student_no number(6,0),
+				course_no number(6,0)
+				score char(1)
+				CONSTRAINT course_reg_uk UNIQUE (student_no, course_no),
+				CONSTRAINT course_score_cc CHECK (score in ('A,' ,'B', 'C', 'D', 'F'))
+			  )
