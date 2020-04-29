@@ -1,0 +1,32 @@
+- 시퀀스
+	- 고유번호(일련번호)를 생성하는 데이터베이스 객체
+	  * 고유번호를 자동으로 생성한다.
+	  * 테이블의 기본 키 값으로 사용되는 경우가 많다.
+	  * 여러 사용자가 공유할 수 있다.
+	- 시퀀스 생성
+		CREATE SEQUENCE 시퀀스명;
+			[START WITH n]				-- 기본값 1
+			[INCREMENT BY n]			-- 기본값 1
+			[{MAXVALUE n | NOMAXVALUE}]		-- 기본값 NOMAXVALUE
+			[{MINVALUE n | NOMINVALUE}]		-- 기본값 NOMINVALUE
+			[{CYCLE | NOCYCLE}]			-- 기본값 NOCYCLE
+			[{CACHE n | NOCACHE}]			-- 기본값 CACHE 20
+		* 아래의 옵션을 설정하지 않을 경우, 1부터 시작해 1씩 증가, 캐시(CACHE)를 사용
+	- 주요 함수
+		NEXTVAL
+			새로운 일련번호를 반환한다.
+		CURRVAL
+			현재 시퀀스의 일련번호값을 반환한다.
+			CURRVAL을 실행하려면 이번 연결에서 해당 시퀀스에 대해 NEXTVAL이 실행되어야 한다.
+			지금 막 증가시킨 값이 나온다.
+	- 시퀀스 삭제
+		DROP SEQUENCE 시퀀스명;
+	- 시퀀스 수정
+		ALTER SEQUENCE 시퀀스명
+			[INCREMENT BY n]
+			[{MAXVALUE n | NOMAXVALUE}]
+			[{MINVALUE n | NOMINVALUE}]
+			[{CYCLE | NOCYCLE}]
+			[{CACHE n | NOCACHE}]
+		* START WITH n값은 수정할 수 없다. (수정을 위해서는 지우고 다시 만들어야함)
+		* 시퀀스를 다른 번호로 다시 시작하려면 시퀀스를 삭제한 후 다시 생성해야 한다.

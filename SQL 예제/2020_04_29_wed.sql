@@ -85,3 +85,56 @@ FROM sample_book_users U, (SELECT user_id, total_price
                                  ORDER BY total_price DESC)
                            WHERE ROWNUM = 1) Top_user
 WHERE U.user_id = Top_user.user_id;
+
+-- 분석함수 사용하기
+-- 급여를 기준으로 정렬해 순번을 부여한다.
+SELECT ROW_NUMBER() OVER(ORDER BY salary DESC) AS sal_rank, salary, first_name
+FROM employees;
+
+-- 급여를 기준으로 내림차순 정렬해서 순번을 부여했을 때 급여순위가 11~20위에 해당하는 직원의 아이디, 이름, 급여를 조회하기
+SELECT sal_rank, employee_id, first_name, salary
+FROM (SELECT ROW_NUMBER() OVER(ORDER BY salary DESC) AS sal_rank, employee_id, first_name, salary
+      FROM employees)
+WHERE (sal_rank BETWEEN 11 AND 20);
+
+-- 부서별로 급여를 기준으로 내림차순 정렬해서 순번을 부여하기
+SELECT department_id, ROW_NUMBER() OVER(PARTITION BY department_id ORDER BY salary DESC) AS rank_in_dept, salary, first_name
+FROM employees;
+
+-- 부서별 급여 1등만 조회하기
+SELECT department_id, first_name, salary
+FROM (SELECT department_id, ROW_NUMBER() OVER(PARTITION BY department_id ORDER BY salary DESC) AS rank_in_dept
+            , salary, first_name
+      FROM employees)
+WHERE rank_in_dept = 1;
+
+-- ROW_NUMBER(), RANK(), DENSE_RANK() 값의 차이점 알아보기
+SELECT ROW_NUMBER() OVER(ORDER BY salary DESC) row_number,
+       RANK()       OVER(ORDER BY salary DESC) rank,
+       DENSE_RANK() OVER(ORDER BY salary DESC) dense_rank,
+       salary
+FROM employees;
+
+-- ROW_NUMBER() OVER()를 활용해 데이터를 특정 컬럼값 기준으로 범위별로 나눠서 조회하기
+-- employee_id순으로 10개씩 조회하기
+SELECT *
+FROM (SELECT ROW_NUMBER() OVER(ORDER BY employee_id ASC) num, employee_id, first_name
+      FROM employees)
+WHERE (num BETWEEN 1 AND 10);
+
+SELECT *
+FROM (SELECT ROW_NUMBER() OVER(ORDER BY employee_id ASC) num, employee_id, first_name
+      FROM employees)
+WHERE (num BETWEEN 11 AND 20);
+
+SELECT FIRST_VALUE(salary) OVER(PARTITION BY department_id ORDER BY salary DESC) AS largest_sal
+        , salary, first_name
+FROM employees;
+
+-- 
+SELECT sample_order_seq.NEXTVAL FROM dual;
+
+SELECT sample_order_seq.CURRVAL FROM dual;
+
+SELECT employee_id, ROWID
+FROM employees;
