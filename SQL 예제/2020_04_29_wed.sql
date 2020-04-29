@@ -138,3 +138,10 @@ SELECT sample_order_seq.CURRVAL FROM dual;
 
 SELECT employee_id, ROWID
 FROM employees;
+
+CREATE INDEX emp_last_name_idx
+ON           employees(last_name);
+
+SELECT last_name
+FROM employees
+WHERE last_name = 'King';
