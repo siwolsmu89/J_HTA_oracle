@@ -56,3 +56,70 @@ SELECT *
 FROM USER_USERS;
 
 GRANT CREATE VIEW TO scott;
+
+-- 집합 연산자 사용하기
+-- 모든 사원의 현재 및 이전에 근무했던 직종을 조회하기
+-- 사원별로 한 번씩만 표시하기
+SELECT employee_id, job_id 
+FROM employees
+UNION
+SELECT employee_id, job_id 
+FROM job_history;
+
+-- 모든 사원의 현재 부서아이디와 이전 소속부서 아이디를 조회하기
+SELECT employee_id, department_id
+FROM employees
+UNION ALL
+SELECT employee_id, department_id
+FROM job_history;
+
+-- 현재 종사하는 직종과 같은 직종에서 종사하고 있는 사원의 아이디와 직종아이디 조회하기
+SELECT employee_id, job_id
+FROM employees
+INTERSECT
+SELECT employee_id, job_id
+FROM job_history;
+
+-- 위의 결과와 같은 조인을 사용한 구문
+SELECT E.employee_id, E.job_id
+FROM employees E, job_history H
+WHERE e.employee_id = H.employee_id
+    AND e.job_id = H.job_id;
+
+-- 직종이 변경된 적이 없는 사원의 아이디 조회하기
+SELECT employee_id
+FROM employees
+MINUS
+SELECT employee_id
+FROM job_history;
+
+-- 직종이 변경된 적이 없는 사원의 아이디와 이름 조회하기
+SELECT A.employee_id, B.first_name
+FROM (SELECT employee_id
+     FROM employees
+     MINUS
+     SELECT employee_id
+     FROM job_history) A, employees B
+WHERE A.employee_id = B.employee_id
+ORDER BY 1;
+
+-- 직종이 변경된 적이 없는 사원의 아이디, 이름, 현재 직종, 소속부서명을 조회하기
+SELECT A.employee_id, E.first_name, E.job_id, D.department_name
+FROM (SELECT employee_id
+      FROM employees
+      MINUS 
+      SELECT employee_id
+      FROM job_history) A
+      , employees E
+      , departments D
+WHERE A.employee_id = E.employee_id
+    AND E.department_id = D.department_id
+ORDER BY 1;
+
+-- 모든 사원의 현재 및 이전에 근무했던 직종을 조회하기
+-- 사원아이디, 직종, 급여를 조회하기
+SELECT employee_id, job_id, salary
+FROM employees
+UNION 
+SELECT employee_id, job_id, 0   
+FROM job_history;

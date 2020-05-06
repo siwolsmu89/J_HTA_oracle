@@ -1,0 +1,17 @@
+- 집합 연산자
+	* 두 개 이상의 SELECT 문의 조회 결과를 하나로 결합시킨다.
+	* 종류
+		- SQL1	 UNION 	    SQL2
+			SQL1과 SQL2의 조회 결과에서 중복을 제거한 후 반환한다.
+			첫번째 컬럼의 오름차순 기준으로 조회 결과가 정렬된다.
+		- SQL1	 UNION ALL  SQL2
+			SQL1과 SQL2의 조회 결과를 중복을 포함하여 반환한다.
+		- SQL1   INTERSECT  SQL2
+			SQL1과 SQL2의 조회 결과에 공통으로 포함된 행만 반환한다.
+		- SQL1	 MINUS 	    SQL2
+			SQL1의 조회 결과에서 SQL2의 조회결과를 제외한 행만 반환한다.
+	* 집합 연산자 사용시 지침
+		- SQL1과 SQL2의 칼럼 개수가 동일해야 한다.
+		- SQL1과 SQL2의 각 컬럼별 데이터타입이 동일해야 한다.
+		- SQL1과 SQL2의 컬럼명은 같지 않아도 상관없다.
+		- UNION, UNION ALL, INTERSECT는 SQL1과 SQL2의 순서가 달라져도 결과는 동일하다.
