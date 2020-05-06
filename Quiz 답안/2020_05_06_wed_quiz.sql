@@ -163,6 +163,12 @@ ORDER BY employee_id;
 
 -- 22. 소속부서에서 입사일이 늦지만 더 많은 급여를 받는 사원의 이름, 입사일, 소속부서명, 급여를 조회하기
 -- 한 명이라도 자기보다 입사일이 빠르고 급여를 적게 받는 사원이 있으면 조건을 만족시킨다.
+SELECT DISTINCT E.first_name, E.hire_date, D.department_name, E.salary
+FROM employees A, employees E, departments D
+WHERE A.department_id = E.department_id
+    AND (A.hire_date < E.hire_date AND A.salary < E.salary)
+    AND E.department_id = D.department_id
+ORDER BY D.department_name;
 
 --23. 부서별 평균급여를 조회했을 때 부서별 평균급여가 10000달러 이하인 부서의 아이디, 부서명, 평균급여를 조회하기
 -- 평균급여는 소수점 1자리까지만 표시한다
