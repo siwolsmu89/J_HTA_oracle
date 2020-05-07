@@ -1,0 +1,17 @@
+- 고급 서브쿼리
+	- 다중 열 서브쿼리
+		* 서브쿼리가 여러 행 및 여러 열을 반환한다.
+		* SELECT column1 , column2, ...
+		  FROM table
+		  WHERE (column, column) IN (SELECT column, column
+					     FROM table
+					     WHERE 조건식)
+		* 연산자는 IN만 사용한다.
+
+	- 스칼라 서브쿼리
+		* 스칼라 서브쿼리는 1행 1열의 값만 반환한다.
+		* 스칼라 서브쿼리를 실행하면 값 하나가 획득된다.
+		* 사용가능한 곳
+			SELECT절, FROM절, WHERE절의 연산자 왼쪽,
+			INSERT문의 VALUES절, UPDATE문의 SET절,
+			CASE와 DECODE의 조건식 및 표현식
