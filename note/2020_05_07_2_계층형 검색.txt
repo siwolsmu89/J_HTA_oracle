@@ -1,0 +1,14 @@
+- 계층형 검색
+	* 자료트리 구조를 갖는 데이터들 사이에 존재하는 관계를 찾아서 계층을 만들고,
+	부모->자손, 자손->부모 방향으로 데이터를 조회하는 것
+	* SELECT [LEVEL], column, column, ...
+	  FROM table
+	  [WHERE] 조건식
+	  [START WITH 조건식]
+	  [CONNECT BY PRIOR 조건식]
+	  * LEVEL : 계층 검색에서 제공하는 컬럼, 각 행이 어느 계층에 속하는지를 숫자값으로 반환
+	  * START WITH : 계층 검색의 시작점을 지정한다.
+		START WITH employee_id = 100;
+	  * CONNECT BY PRIOR : 부모-자식관계에 있는 컬럼을 지정한다. 
+		CONNECT BY PRIOR 부모키 = 자식키 : TOP-DOWN(위에서 아래로) 검색
+		CONNECT BY PRIOR 자식키 = 부모키 : BOTTOM-UP(아래에서 위로) 검색

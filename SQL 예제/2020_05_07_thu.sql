@@ -80,4 +80,86 @@ WHERE EXISTS (SELECT 1
               FROM employees E
               WHERE E.manager_id = M.employee_id);
               
--- WITH 절
+-- WITH 절 사용하기
+-- 전체 부서의 평균 총 급여보다 총 급여가 많은 부서를 찾기
+WITH 
+dept_costs AS
+(SELECT D.department_name, SUM(E.salary) AS dept_total
+ FROM employees E, departments D
+ WHERE E.department_id = D.department_id
+ GROUP BY D.department_name),
+avg_cost AS
+(SELECT SUM(dept_total)/count(*) AS dept_avg
+ FROM dept_costs)
+SELECT *
+FROM dept_costs
+WHERE dept_total > (select dept_avg
+                    FROM avg_cost)
+ORDER BY department_name;
+
+-- 118번 사원의 상사롤 조회하기
+SELECT employee_id, first_name, manager_id
+FROM employees
+START WITH employee_id = 118
+CONNECT BY PRIOR manager_id = employee_id;
+
+-- 101번 직원의 모든 부하 조회하기
+-- LEVEL과 LPAD를 사용하여 직관적으로 depth를 표현하기
+SELECT LPAD(employee_id, LEVEL*4, ' ') as employee_id, first_name, manager_id
+FROM employees
+START WITH employee_id = 101
+CONNECT BY PRIOR employee_id = manager_id;
+
+-- 100번 직원의 모든 부하 조회하기
+SELECT LPAD(first_name, LENGTH(first_name) + level*5-5, ' ')
+FROM employees
+START WITH employee_id = 100
+CONNECT BY PRIOR employee_id = manager_id;
+
+-- 100의 모든 부하직원 조회, Neena는 제외
+-- CONNECT BY에서 설정 -> Neena의 부하들까지 함께 제외된다.
+SELECT LPAD(first_name, LENGTH(first_name) + level*5-5, ' ')
+FROM employees
+START WITH employee_id = 100
+CONNECT BY PRIOR employee_id = manager_id
+    AND first_name != 'Neena';
+    
+-- 100의 직속 부하들만 조회하기
+-- LEVEL 2까지만 표시하기
+SELECT LPAD(first_name, LENGTH(first_name) + level*5-5, ' ')
+FROM employees
+START WITH employee_id = 100
+CONNECT BY PRIOR employee_id = manager_id
+    AND LEVEL<=2;
+    
+-- 2020/01/01 ~ 2020/12/31 날짜 만들기
+SELECT TO_DATE('2020/01/01', 'yyyy/mm/dd') + LEVEL -1
+FROM dual
+CONNECT BY LEVEL <= 366;
+
+-- 2003년도 월별 입사자수 조회하기
+SELECT TO_CHAR(hire_date, 'yyyy-mm'), count(*)
+FROM employees
+WHERE TO_CHAR(hire_date, 'yyyy') = '2003'
+GROUP BY TO_CHAR(hire_date, 'yyyy-mm')
+ORDER BY 1;
+
+-- 입사자가 없는 달도 표시하기
+WITH
+months AS
+(SELECT '2003-' ||
+    CASE
+        WHEN LEVEL < 10 THEN '0' || LEVEL
+        ELSE to_char(LEVEL)
+    END AS mon
+ FROM dual
+ CONNECT BY LEVEL <= 12),
+month_emp_count AS
+(SELECT TO_CHAR(hire_date, 'yyyy-mm') AS mon, count(*) AS cnt
+ FROM employees
+ WHERE TO_CHAR(hire_date, 'yyyy') = '2003'
+ GROUP BY TO_CHAR(hire_date, 'yyyy-mm'))
+SELECT M.mon, NVL(C.cnt, 0) AS cnt
+FROM months M, month_emp_count C
+WHERE M.mon = C.mon(+)
+ORDER BY M.mon;
