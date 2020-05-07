@@ -15,3 +15,38 @@
 			SELECT절, FROM절, WHERE절의 연산자 왼쪽,
 			INSERT문의 VALUES절, UPDATE문의 SET절,
 			CASE와 DECODE의 조건식 및 표현식
+
+	- 상호연관 서브쿼리
+		* 조회된 행의 단위로 서브쿼리가 사용된다.
+		* 서브쿼리가 외부 쿼리의 모든 행에 대해 한번씩 실행된다.
+		* SELECT column, column, ...
+		  FROM table OUTER
+		  WHERE column 연산자 (SELECT column
+				       FROM table2 INNER
+				       WHERE INNER.column = OUTER.column)
+		* 사용예
+		 -- 소속부서의 평균급여보다 급여를 많이 받는 사원의 이름, 급여를 조회하기
+		 SELECT outter.first_name, outter.salary
+		 FROM employees outter
+		 WHERE outter.salary > (SELECT AVG(inner.salary)
+					FROM employees inner
+					WHERE inner.department_id = outter.department_id);
+		 -- 외부 SQL이 실행되어서 행을 가져온다. (후보행)
+		 -- 후보행의 행마다 outter.department_id 값을 가져와서 서브쿼리를 실행한다.
+		 -- 서브쿼리의 결과값을 사용해서 후보행을 검증한다.
+		 -- 검증을 통과한 행만 최종 결과로 출력된다.
+
+	- EXISTS 연산자
+		* 서브쿼리 실행 결과 조회된 행이 있는지 여부를 확인하는 연산자다.
+		* 서브쿼리 실행 중 조건을 만족한 행이 하나라도 있으면 즉시 TRUE를 반환하고 검색을 중단한다.
+		* 사용예
+		-- 부하직원을 가지고 있는 직원을 조회하기
+		 SELECT *
+		 FROM employees M
+		 WHERE EXISTS (SELECT 1
+         		       FROM employees E
+            		       WHERE E.manager_id = M.employee_id);
+		* 서브쿼리에서는 값을 조회하는 것이 목적이 아니기 때문에 보통 상수로 값을 적는다.
+		* EXISTS 연산자는 서브쿼리에서 행이 검색되면 TRUE 값을 반환한다.
+
+	-
