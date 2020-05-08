@@ -46,3 +46,16 @@ INSERT INTO sample_book_orders
     (order_no, user_id, book_no, order_price, order_amount, order_registered_date)
 VALUES
     (SAMPLE_ORDER_SEQ.NEXTVAL, 'kimmi', 10012, 13500, 10, SYSDATE);
+    
+INSERT INTO sample_book_reviews
+    (review_no, review_content, review_point, review_registered_date, book_no, user_id)
+VALUES
+    (SAMPLE_REVIEW_SEQ.NEXTVAL, '≥Î¿Î', 1, SYSDATE, 10007, 'kimmi');
+
+EXECUTE add_book_order('kimmi', 10012, 3);
+
+SELECT get_total_order_amount(10012) AS "TOTAL_AMOUNT(10012)"
+FROM dual;
+
+SELECT get_total_order_price(10012) AS "TOTAL_PRICE(10012)"
+FROM dual;
