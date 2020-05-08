@@ -24,3 +24,13 @@ ORDER BY department_id;
 SELECT department_id, department_name, get_emp_count(department_id) AS cnt
 FROM departments
 ORDER BY department_id;
+
+SELECT get_total_salary
+FROM dual;
+
+-- 부서 아이디, 부서명, 부서 소속 사원수, 부서 총 연봉 조회하기
+SELECT department_id, department_name
+    , get_emp_count(department_id) AS cnt
+    , get_dept_total_salary(department_id) AS total_salary
+FROM departments
+ORDER BY department_id;

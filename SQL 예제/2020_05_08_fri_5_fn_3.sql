@@ -18,9 +18,11 @@ BEGIN
     -- FOR 변수명 IN 커서명 LOOP
     --    수행문;
     -- END LOOP;
-
     FOR emp IN emp_list LOOP
-       
+       v_salary        := emp.salary;
+       v_cms           := emp.cms;
+       v_annual_salary := TRUNC(v_salary * 12 * (1 + v_cms));
+       v_total_salary  := v_total_salary + v_annual_salary;
     END LOOP;
 
     RETURN v_total_salary;
