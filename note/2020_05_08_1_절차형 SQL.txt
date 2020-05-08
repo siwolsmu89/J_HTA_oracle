@@ -12,7 +12,7 @@
 	* 함수(Function)
 		- 프로시저와 동일하게 절차형 SQL을 활용하여 일련의 SQL 작업을 처리하고,
 		  그 처리 결과를 단일값으로 반환할 수 있는 절차형 SQL이다.
-	* 트리거
+	* 트리거(Trigger)
 		- 특정 테이블에 데이터의 추가, 수정, 삭제 등의 데이터변경 이벤트가 발생하면
 		  DBMS에서 자동으로 실행되도록 구현된 프로그램을 말한다.
 
@@ -28,7 +28,7 @@
 	  BEGIN 
 		SQL 문장, PL/SQL 제어문장
 		...
-	  END
+	  END;
 	* 실행하기
 	  EXECUTE 프로시저명(값, 값);
 
@@ -47,4 +47,14 @@
 		PL/SQL 블록
 		-- 리턴문이 반드시 존재해야 한다.
 		RETURN 변수 또는 값;
+	END;
+
+- 트리거
+	* 문법
+	CREATE OR REPLACE TRIGGER 트리거명
+	BEFORE | AFTER 					-- BEFORE나 AFTER중 하나를 사용한다.
+	INSERT | UPDATE | DELETE ON 테이블명		-- INSERT나 UPDATE, DELETE 중 하나를 사용한다.
+	FOR EACH ROW
+	BEGIN
+		PL/SQL 구문
 	END;

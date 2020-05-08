@@ -34,3 +34,15 @@ SELECT department_id, department_name
     , get_dept_total_salary(department_id) AS total_salary
 FROM departments
 ORDER BY department_id;
+
+-- 트리거 생성 후, insert 작업 시 트리거가 자동으로 실행된다.
+-- sample_book_likes에 행이 추가되면 해당 행의 book_no를 조회하여 sample_books에서 book_no에 일치하는 book_likes가 1 증가된다.
+INSERT INTO sample_book_likes
+    (book_no, user_id)
+VALUES
+    (10011, 'kimmi');
+    
+INSERT INTO sample_book_orders
+    (order_no, user_id, book_no, order_price, order_amount, order_registered_date)
+VALUES
+    (SAMPLE_ORDER_SEQ.NEXTVAL, 'kimmi', 10012, 13500, 10, SYSDATE);
