@@ -6,7 +6,7 @@ IS
     
 BEGIN
     
-    SELECT SUM(order_amount)
+    SELECT NVL(SUM(order_amount),0)
     INTO v_total_amount
     FROM sample_book_orders
     WHERE book_no = i_book_no;
